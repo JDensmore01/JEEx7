@@ -10,8 +10,11 @@
 	String userName = "";
 	String password = "";
 	boolean pref = false;
+	int ddValue = 0;
 	String correctUsername = "Class2022";
-	String correctPassword = "password123";%>
+	String correctPassword = "password123";
+	final String[] dropDownValues = {"Secret", "Hot Dog", "Masterpiece", "Howdy Do!", "Toasty"};	
+%>
 <%
 	errors = new ArrayList<>();
 	if (request.getParameter("btnLogin") != null) {
@@ -23,6 +26,7 @@
 				Cookie user = new Cookie("userName", userName);
 				Cookie pass = new Cookie("password", password);
 				Cookie save = new Cookie("save", "true");
+				Cookie ddVal = new Cookie("ddVal", request.getParameter("ddvalue"));
 			
 				user.setMaxAge(60 * 60);
 				user.setPath("/JEEx7");
@@ -35,6 +39,10 @@
 				save.setMaxAge(60 * 60);
 				save.setPath("/JEEx7");
 				response.addCookie(save);
+				
+				ddVal.setMaxAge(60*60);
+				ddVal.setPath("/JEEx7");
+				response.addCookie(ddVal);
 			} else {
 				if (request.getCookies() != null) {
 					Cookie[] cookies = request.getCookies();
@@ -51,6 +59,11 @@
 						}
 						
 						if (c.getName().equals("save")) {
+							c.setMaxAge(0);
+							c.setPath("/JEEx7");
+						}
+						
+						if (c.getName().equals("ddVal")) {
 							c.setMaxAge(0);
 							c.setPath("/JEEx7");
 						}
@@ -84,6 +97,10 @@
 			if (c.getName().equals("save")) {
 				pref = Boolean.parseBoolean(c.getValue());
 			}
+			
+			if (c.getName().equals("ddVal")) {
+				ddValue = Integer.parseInt(c.getValue());
+			}
 		}
 	}
 %>
@@ -112,6 +129,23 @@
 								<td class="width-100">Password:</td>
 								<td class="width-300"><input type="password"
 									name="txtPassword" class="width-300" value='<%= password %>' /></td>
+							</tr>
+							<tr>
+								<td>
+									<select name="ddvalue">
+										<option value="0">--Choose an Option--</option>
+										<% 
+											for (int i = 0; i < dropDownValues.length; i++) {
+												String selected = "";
+												if (i + 1 == ddValue)
+													selected = "selected";
+										%>
+											
+											<option value="<%=i + 1 %>" <%=selected %>><%=dropDownValues[i] %></option>
+											
+										<% } %>
+									</select>
+								</td>
 							</tr>
 							<tr>
 								<td><input type="checkbox" name="chkSave" <%= pref ? "checked" : "" %> />Save</td>
